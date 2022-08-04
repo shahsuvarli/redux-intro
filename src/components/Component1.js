@@ -1,7 +1,15 @@
 import React, { useEffect } from "react";
 import axios from "axios";
+import { store } from "../store";
+import { batch, useDispatch, useSelector } from "react-redux";
+import { fillMovies, setArtir } from "../store/actions/home";
 
-function Component1() {
+const Component1 = (props) => {
+  const state = useSelector((state) => state);
+  // const homePrice = useSelector((state) => state.home.price);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getMovies();
   }, []);
@@ -9,12 +17,45 @@ function Component1() {
   const getMovies = () => {
     axios
       .get(
-        "https://api.themoviedb.org/3/movie/550?api_key=d83f024ca7d748222de8223f34bb78d2"
+        "http://www.omdbapi.com/?s=series&apikey=9094cc9e"
       )
-      .then((res) => {});
+      .then((res) => {
+        dispatch(fillMovies(res.data.Search));
+      });
   };
 
-  return <div>Component1</div>;
-}
+  console.log("props", props);
+  console.log("state", state);
 
+  return (
+    <div>
+      Component1
+      <button
+        onClick={() =>
+          batch(() => {
+            dispatch(setArtir(100));
+            dispatch({ type: "AZALT", payload: -100 });
+          })
+        }
+      >
+        price deyish
+      </button>
+      <button
+        onClick={() => {
+          console.log(store.getState());
+        }}
+      >
+        show store
+      </button>
+      <div>{props.mehsulQiymeti}</div>
+    </div>
+  );
+};
+
+// const mapStateToProps = (state) => ({
+//   mehsulQiymeti: state.home.price,
+//   subCategories: state.categories.sub_categories,
+// });
+
+// export default connect(mapStateToProps, null)(Component1);
 export default Component1;
